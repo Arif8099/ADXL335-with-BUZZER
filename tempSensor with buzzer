@@ -1,0 +1,66 @@
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
+
+//#include <dht11.h>
+#define DHTPIN 2     // Digital pin connected to the DHT sensor 
+const int buzzer = 9;                 //buzzer to arduino pin 9
+//dht11 DHT11;
+#define DHTTYPE    DHT11     // DHT 11
+
+DHT_Unified dht(DHTPIN, DHTTYPE);
+
+uint32_t delayMS;
+
+void setup()
+{
+  Serial.begin(9600);
+  // Initialize device.
+  dht.begin();
+  //Serial.println(F("DHTxx Unified Sensor Example"));
+  // Print temperature sensor details.
+  sensor_t sensor;
+  dht.temperature().getSensor(&sensor);
+
+  // Print humidity sensor details.
+  dht.humidity().getSensor(&sensor);
+
+  // Set delay between sensor readings based on sensor details.
+  delayMS = sensor.min_delay / 1000;
+
+  pinMode(buzzer, OUTPUT); // Set buzzer - pin 9 as an output
+ 
+}
+
+void loop()
+{
+  // Delay between measurements.
+  delay(delayMS);
+  // Get temperature event and print its value.
+  sensors_event_t event;
+  dht.temperature().getEvent(&event);
+  if ((event.temperature) <= 2 || (event.temperature) >= 8) {
+    tone(buzzer, 1000); // Send 1KHz sound signal...
+    delay(1000);        // ...for 1 sec
+    noTone(buzzer);     // Stop sound...
+    delay(1000);        // ...for 1se
+  } else {
+    Serial.print(F("Temperature: "));
+    Serial.print(event.temperature);
+    Serial.println(F("°C"));
+  }
+  
+  // Get humidity event and print its value.
+  /*dht.humidity().getEvent(&event);
+  if (event.relative_humidity) {
+    Serial.print(F("Humidity: "));
+    Serial.print(event.relative_humidity);
+    Serial.println(F("%"));
+    tone(buzzer, 1000); // Send 1KHz sound signal...
+    delay(1000);        // ...for 1 sec
+    noTone(buzzer);     // Stop sound...
+    delay(1000);        // ...for 1se
+  }*/
+  
+
+}
