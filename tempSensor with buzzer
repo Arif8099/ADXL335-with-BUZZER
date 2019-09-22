@@ -40,14 +40,15 @@ void loop()
   sensors_event_t event;
   dht.temperature().getEvent(&event);
   if ((event.temperature) <= 2 || (event.temperature) >= 8) {
+    Serial.print(F("Temperature: "));
+    Serial.print(event.temperature);
+    Serial.println(F("°C"));
+    
+  } else {
     tone(buzzer, 1000); // Send 1KHz sound signal...
     delay(1000);        // ...for 1 sec
     noTone(buzzer);     // Stop sound...
     delay(1000);        // ...for 1se
-  } else {
-    Serial.print(F("Temperature: "));
-    Serial.print(event.temperature);
-    Serial.println(F("°C"));
   }
   
   // Get humidity event and print its value.
